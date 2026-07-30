@@ -1,0 +1,44 @@
+{
+  "detection": {
+    "max_hands": 2,
+    "min_hand_detection_confidence": 0.55,
+    "min_hand_presence_confidence": 0.55,
+    "min_hand_tracking_confidence": 0.55,
+    "min_face_detection_confidence": 0.5,
+    "min_face_presence_confidence": 0.5,
+    "min_face_tracking_confidence": 0.5,
+    "mouth_open_ratio": 0.1,
+    "jaw_open_score": 0.4,
+    "tongue_color_ratio": 0.1,
+    "trigger_confirmation_frames": 3,
+    "trigger_hold_seconds": 0.8
+  },
+  "display": {
+    "capture_width": 640,
+    "capture_height": 480,
+    "capture_fps": 30,
+    "meme_width_ratio": 0.34,
+    "show_landmarks": true
+  },
+  "memes": {
+    "peace": "assets/memes/peace.png",
+    "one_finger": "assets/memes/one_finger.png",
+    "open_palm": "assets/memes/open_palm.png",
+    "mouth_open": "assets/memes/mouth_open.png",
+    "tongue_out": "assets/memes/tongue_out.png"
+  },
+  "trigger_labels": {
+    "peace": "PEACE",
+    "one_finger": "ONE FINGER",
+    "open_palm": "OPEN PALM",
+    "mouth_open": "MOUTH OPEN",
+    "tongue_out": "TONGUE OUT"
+  },
+  "trigger_priority": [
+    "tongue_out",
+    "peace",
+    "one_finger",
+    "open_palm",
+    "mouth_open"
+  ]
+}

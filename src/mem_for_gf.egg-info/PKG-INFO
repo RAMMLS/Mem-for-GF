@@ -1,0 +1,117 @@
+Metadata-Version: 2.4
+Name: mem-for-gf
+Version: 1.0.0
+Summary: Real-time hand gesture and facial expression meme application
+Requires-Python: <3.13,>=3.12
+Description-Content-Type: text/markdown
+Requires-Dist: mediapipe==0.10.35
+Requires-Dist: opencv-contrib-python==5.0.0.93
+Requires-Dist: Pillow==12.3.0
+
+# Mem-for-GF
+
+Готовое десктопное CV-приложение для macOS: получает видео с веб-камеры,
+распознаёт жесты рук и мимику лица в реальном времени и показывает связанный
+мем поверх кадра.
+
+## Что распознаётся
+
+| Триггер | Условие | Файл мема |
+|---|---|---|
+| `peace` | подняты указательный и средний пальцы | `assets/memes/peace.png` |
+| `one_finger` | поднят только указательный палец | `assets/memes/one_finger.png` |
+| `open_palm` | раскрыты все пять пальцев | `assets/memes/open_palm.png` |
+| `mouth_open` | открыт рот | `assets/memes/mouth_open.png` |
+| `tongue_out` | открыт рот и видна красно-розовая область ниже нижней губы | `assets/memes/tongue_out.png` |
+
+Для пальцев используются углы суставов и расстояния относительно запястья,
+а не только положение по оси Y. Открытый рот определяется по Face Landmarks и
+blendshape `jawOpen`. MediaPipe не отдаёт отдельную landmark языка, поэтому
+`tongue_out` дополнительно использует цветовую эвристику в ROI под нижней губой.
+
+## Запуск
+
+Самый простой способ — открыть двойным щелчком `run.command`.
+
+Из терминала:
+
+```bash
+.venv/bin/python main.py
+```
+
+При первом запуске macOS запросит доступ к камере. Он должен быть разрешён для
+приложения, из которого запущен Python: Codex или Terminal.
+
+Управление в окне:
+
+- `Q` или `Esc` — выход;
+- `L` — включить/выключить landmarks;
+- `M` — включить/выключить мемы.
+
+## Свои мемы
+
+Замените пять PNG-файлов в `assets/memes`, сохранив имена из таблицы выше.
+Поддерживаются PNG с прозрачностью, обычные PNG и JPEG, если изменить путь в
+`config.json`. Изображение автоматически масштабируется и размещается справа
+снизу. Если файл отсутствует или повреждён, приложение создаёт заглушку в памяти.
+
+Чувствительность, задержка подтверждения триггера, размер мема и пути к файлам
+настраиваются в `config.json`.
+
+## Диагностика на видео
+
+Приложение умеет обрабатывать файл без камеры и сохранять аннотированный MP4:
+
+```bash
+.venv/bin/python main.py \
+  --video "data_video/вид1.MP4" \
+  --headless \
+  --output "output/вид1_annotated.mp4"
+```
+
+Все параметры:
+
+```bash
+.venv/bin/python main.py --help
+```
+
+## Проверка
+
+```bash
+.venv/bin/python -m pytest
+```
+
+Тесты покрывают математику трёх жестов, открытую/закрытую мимику рта,
+эвристику языка, debounce/приоритет триггеров и резервную мем-картинку.
+
+## Платформа и зависимости
+
+- macOS на Apple Silicon;
+- Python 3.12.13 ARM64;
+- OpenCV 5.0.0 (`opencv-contrib-python` 5.0.0.93);
+- MediaPipe 0.10.35 Tasks API;
+- веб-камера.
+
+## Структура
+
+```text
+.
+├── main.py               # точка запуска
+├── config.json           # пороги и соответствия мемов
+├── run.command           # запуск двойным щелчком на macOS
+├── src/mem_for_gf/
+│   ├── app.py            # видеопоток и главный цикл
+│   ├── vision.py         # MediaPipe Hand/Face Landmarker
+│   ├── gestures.py       # математика жестов и мимики
+│   ├── drawing.py        # landmarks и HUD
+│   ├── memes.py          # загрузка и наложение картинок
+│   ├── triggers.py       # стабилизация триггеров
+│   └── models.py         # проверка/загрузка моделей
+├── assets/
+│   └── memes/            # заглушки или пользовательские мемы
+├── models/               # официальные MediaPipe .task-модели
+├── data_video/           # тестовые видеозаписи
+├── tests/                # автоматические тесты
+├── scripts/              # генерация PNG-заглушек
+└── .venv/                # локальное ARM64-окружение
+```

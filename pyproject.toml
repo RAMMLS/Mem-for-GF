@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mem-for-gf"
+version = "1.0.0"
+description = "Real-time hand gesture and facial expression meme application"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "mediapipe==0.10.35",
+  "opencv-contrib-python==5.0.0.93",
+  "Pillow==12.3.0"
+]
+
+[project.scripts]
+mem-for-gf = "mem_for_gf.app:cli"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]

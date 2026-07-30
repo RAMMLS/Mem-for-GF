@@ -1,0 +1,2 @@
+[console_scripts]
+mem-for-gf = mem_for_gf.app:cli
